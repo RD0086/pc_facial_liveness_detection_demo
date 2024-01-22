@@ -1,0 +1,19 @@
+{
+  "name": "pc_facial_liveness_detection_demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --open --host localhost --port 8080 --config webpack.config.js",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "html-webpack-plugin": "^5.5.1"
+  },
+  "dependencies": {
+    "jquery": "^3.6.4"
+  }
+}

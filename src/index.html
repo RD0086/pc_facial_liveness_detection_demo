@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../dist/bundle.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <script src="./js/jquery.js"></script>
+    <script src="./js/json2.js"></script>
+    <!--[if IE]>
+        <script src="./js/html5shiv-printshiv.js"></script>
+        <script src="./js/respond.src.js"></script>
+    <![endif]-->
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="contentBox">
+            <div class="contentItem envInfoBox">
+                <div class="checkAppBox">
+                    <iframe id="trigger_protocol_ifrm" style="display:none"></iframe>
+                    <div class="checkAppContent">
+                        <input id="checkBtn" type="button" class="checkBtn" value="启动客户端"></input>
+                        <div class="checkRes"></div>
+                    </div>
+                </div>
+                <div class="envInfoContent">
+                    <button class="clickBtn getEnvInfoBtn">获取环境信息</button>
+                    <div class="envInfoItem">
+                        <div class="envInfoLabel">code:</div>
+                        <div class="envInfoRes"></div>
+                    </div>
+                    <div class="envInfoItem">
+                        <div class="envInfoLabel">msg:</div>
+                        <div class="envInfoRes"></div>
+                    </div>
+                    <div class="envInfoItem">
+                        <div class="envInfoLabel">请求挑战码:</div>
+                        <div class="envInfoRes"></div>
+                    </div>
+                    <div class="envInfoItem">
+                        <div class="envInfoLabel">单目摄像头:</div>
+                        <div class="envInfoRes monocularCameraBox">
+                            <ul class="monocularCameraUl"></ul>
+                        </div>
+                    </div>
+                    <div class="envInfoItem">
+                        <div class="envInfoLabel">双目摄像头:</div>
+                        <div class="envInfoRes binocularCameraBox">
+                            <ul class="binocularCameraUl"></ul>
+                        </div>
+                    </div>
+                    <div class="envInfoItem">
+                        <div class="envInfoLabel">软件版本:</div>
+                        <div class="envInfoRes"></div>
+                    </div>
+                    <div class="envInfoItem">
+                        <div class="envInfoLabel">系统时间:</div>
+                        <div class="envInfoRes"></div>
+                    </div>
+                    <div class="testimgBox"></div>
+                </div>
+            </div>
+            <div class="contentItem livingDetectBox">
+                <div class="livingDetectContent">
+                    <span class="boxTitle">请输入以下参数开始活体检测:</span>
+                    <div class="cameraTypeSelectBox">
+                        <select id="cameraTypeSelect">
+                            <option value="0">单目摄像头</option>
+                            <option value="1">双目摄像头</option>
+                        </select>    
+                    </div>
+                    <div class="livingDetectItem">
+                        <span>摄像头类型</span>
+                        <input type="text" class="livingDetectInput cameraTypeInput" name="cameraType" value="0">
+                    </div>
+                    <div class="livingDetectItem">
+                        <span>摄像头下标</span>
+                        <input type="text" class="livingDetectInput" name="cameraIndex">
+                    </div>
+                    <div class="livingDetectItem">
+                        <span>截取照片数</span>
+                        <input type="text" class="livingDetectInput" name="takenImgContent" placeholder="请输入1-4之间的数值">
+                    </div>
+                    <div class="livingDetectItem">
+                        <span>活体检测超时时间</span>
+                        <input type="text" class="livingDetectInput" name="detectionMaxTime" placeholder="请输入大于60的数值">
+                    </div>
+                    <div class="livingDetectItem">
+                        <span>回显框大小</span>
+                        <input type="text" class="livingDetectInput" name="cameraViewSize" placeholder="请输入0.7-2.5之间的数值">
+                    </div>
+                    <div class="livingDetectItem">
+                        <span>眨眼阈值</span>
+                        <input type="text" class="livingDetectInput" name="binkThresholdValue" placeholder="请输入0.75-1.0之间的数值">
+                    </div>
+                    <button class="clickBtn livingDetectBtn">开始检测</button>
+                </div>
+            </div>
+            <div class="contentItem liveDetectionResBox">
+                <div class="liveDetectionResContent">
+                    <div class="liveDetectionResTitle">活体检测结果</div>
+                    <div class="liveDetectionResItem">
+                        <div class="liveDetectionResLabel">code</div>
+                        <div class="liveDetectionResInfo"></div>
+                    </div>
+                    <div class="liveDetectionResItem">
+                        <div class="liveDetectionResLabel">msg</div>
+                        <div class="liveDetectionResInfo"></div>
+                    </div>
+                    <div class="liveDetectionResItem">
+                        <div class="liveDetectionResLabel">请求挑战码</div>
+                        <div class="liveDetectionResInfo"></div>
+                    </div>
+                    <div class="liveDetectionResItem">
+                        <div class="liveDetectionResLabel">检测结果</div>
+                        <div class="liveDetectionResInfo"></div>
+                    </div>
+                    <div class="liveDetectionResItem">
+                        <div class="liveDetectionResLabel">摄像头名称</div>
+                        <div class="liveDetectionResInfo"></div>
+                    </div>
+                    <div class="liveDetectionResItem">
+                        <div class="liveDetectionResLabel">系统时间</div>
+                        <div class="liveDetectionResInfo"></div>
+                    </div>
+                    <div class="bestImgBox">
+                        <ul class="bestImgUl"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var isDone = true;
+        var timeout,assistEl,triggerEl;
+        //页面加载完成后设置监听事件
+        $(document).ready(function(){
+            //开启客户端
+            $("#checkBtn").click(function(){
+                assistEl = document.getElementById("checkBtn")
+                triggerEl = document.getElementById("trigger_protocol_ifrm");
+                //判断当前客户端是否开启
+                handleGetEnvInfo("getAppState");
+            })
+            //获取环境信息
+            $(".getEnvInfoBtn").click(function(){
+                handleGetEnvInfo("getEnvInfo");
+            })
+            //改变选择框内选择的摄像头类型
+            $("#cameraTypeSelect").change(function(){
+                var checkValue=$("#cameraTypeSelect").val();
+                $(".cameraTypeInput").val(checkValue);
+            });
+            //开始活体检测
+            $(".livingDetectBtn").click(function(){
+                handleStartLivingDetect();
+            })
+        });
+        
+        function launchApplication(url,success,fail){
+            //如果上次调起客户端没有完成，则直接返回，防止重复调用
+            if(!isDone)return;
+            isDone = false;
+            assistEl.focus();
+            assistEl.onblur = function(){
+                if(document.activeElement && document.activeElement !== assistEl){
+                    //如果上次调起客户端没有完成，则直接返回，防止重复调用
+                    assistEl.focus();
+                } else {
+                    //如果焦点元素，快速失去了焦点，说明客户端已经被调起。
+                    done();
+                    success();
+                }
+            };
+            
+            triggerEl.onerror = function(){
+                //进入错误事件回调函数说明没有注册协议
+                done();
+                fail();
+            };
+        
+        
+            try{
+                triggerEl.src = url;
+            }catch(e){
+                //捕获到异常说明没有注册协议
+                done();
+                fail(); 
+            }
+        
+            //如果超过一定时间仍然没有变化，说明没有注册协议
+            timeout = setTimeout(function(){
+                done();
+                fail();
+            }, 1800);
+        }
+        //调用开启客户端完成后的操作
+        function done(){
+            isDone = true;
+            assistEl.onblur = null;
+            triggerEl.onerror = null;
+            clearTimeout(timeout);
+        }
+        //获取环境信息
+        function handleGetEnvInfo(type){
+            //将上一次获取的信息清空
+            var envInfoResList = document.querySelectorAll(".envInfoRes");
+            for(var j = 0; j < envInfoResList.length; j++){
+                if(j != 3 && j != 4){
+                    envInfoResList[j].innerHTML = ""
+                }else{
+                    $(".monocularCameraUl")[0].innerHTML = "";
+                    $(".binocularCameraUl")[0].innerHTML = ""
+                }  
+            }
+            var challenge = randomString(24);
+            var requestData= JSON.stringify({"challenge":challenge});
+            jQuery.support.cors = true;         //$ajax({}) 正常写
+            $.ajax({
+                type : "POST",
+                data : requestData,
+                url : "http://127.0.0.1:13302/facialLiveDetection/checkEnv",
+                success: function(result){
+                    if(type == "getEnvInfo"){
+                        getDom("envInfoContent",0,"envInfoRes").innerHTML = result.code;
+                        getDom("envInfoContent",1,"envInfoRes").innerHTML = result.errMsg;
+                        var content = JSON.parse(result.content);
+                        getDom("envInfoContent",2,"envInfoRes").innerHTML = content.challenge;
+                        getDom("envInfoContent",5,"envInfoRes").innerHTML = content.swVersion;
+                        getDom("envInfoContent",6,"envInfoRes").innerHTML = content.currentTime;
+                        var cameraList = content.cameraList;
+                        var binocularCameraList = [];
+                        var monocularCameraList = [];
+                        //分类单目摄像头和双目摄像头
+                        for(var i = 0; i < cameraList.length; i++){
+                           if(cameraList[i].cameraType == "monocularCamera"){
+                                var monocularCamera = cameraList[i].cameraName + "[" + cameraList[i].cameraIndex + "]"
+                                monocularCameraList.push(monocularCamera);
+                           }else if(cameraList[i].cameraType == "binocularCamera"){
+                                var binocularCamera = cameraList[i].cameraName + "[" + cameraList[i].cameraIndex + "]"
+                                binocularCameraList.push(binocularCamera);
+                           }
+                        }
+                        // alert(binocularCameraList)
+                        //分别显示单目摄像头和双目摄像头及它们的下标
+                        $(".monocularCameraUl").children().remove();
+                        $(".binocularCameraUl").children().remove();
+                        $(".monocularCameraBox")[0].style.height = "56px";
+                        for(var t = 0; t < monocularCameraList.length; t++){
+                            if(monocularCameraList.length > 1){
+                                var num = monocularCameraList.length * 35;
+                                $(".monocularCameraBox")[0].style.height = num.toString() + "px";
+                            }
+                            $(".monocularCameraUl").append("<li>"+ monocularCameraList[t] +"</li>")
+                        }
+                        for(var p = 0; p < binocularCameraList.length; p++){
+                            if(binocularCameraList.length > 1){
+                                var num = binocularCameraList.length * 35;
+                                $(".binocularCameraBox")[0].style.height = num.toString() + "px";
+                            }
+                            $(".binocularCameraUl").append("<li>"+ binocularCameraList[p] +"</li>")
+                        }
+                    }else if(type == "getAppState"){
+                        $(".checkRes").text("客户端已开启")
+                    }
+                },
+                error:function(err){
+                    if(type == "getEnvInfo"){
+                        alert("异常，请检查客户端是否开启");
+                        console.error("获取环境信息失败",err)
+                    }else if(type == "getAppState"){
+                        //客户端未开启，调用函数打开客户端
+                        launchApplication("AuthCenter://",
+                            function(){$(".checkRes").text("客户端已安装")},
+                            function(){$(".checkRes").text("客户端未安装")}
+                        );
+                    }
+                }
+
+            });
+        }
+        //获取元素
+        function getDom(dom,num,children){
+            var getRes = $("."+dom).children("div").eq(num).children("."+children)[0];
+            return getRes;
+        }
+        //生成随机挑战码
+        function randomString(len) {
+			var date = new Date();
+			var y = date.getFullYear() + "";
+			var M = date.getMonth() + 1 + "";
+			var d = date.getDate() + "";
+			var H = date.getHours() + "";
+			var m = date.getMinutes() + "";
+			var s = date.getSeconds() + "";
+			var timestamp = y + M + d + H + m + s;
+			len = len - timestamp.length - 3;
+			/****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+			var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    
+			var maxPos = $chars.length;
+			var randomStr = '';
+			for (var i = 0; i < len; i++) {
+					randomStr += $chars.charAt(Math.floor(Math.random() * maxPos));
+			}
+			return "PCL" + timestamp + randomStr + "";
+		}
+        //开始活体检测
+        function handleStartLivingDetect(){
+            //设置请求参数
+			//此处随机生成的challenge仅为测试，传入的challenge需确保唯一性
+            var challenge = randomString(24);
+            //获取输入框内的值
+            var detectionMaxTime = parseInt($('input[name = "detectionMaxTime"]').val(),10)
+            var requestData = JSON.stringify({
+				"challenge":challenge,
+				"cameraType": $('input[name = "cameraType"]').val(),
+				"cameraIndex": parseInt($('input[name = "cameraIndex"]').val(),10),
+				"takenImgContent": parseInt($('input[name = "takenImgContent"]').val(),10),
+				"detectionMaxTime": detectionMaxTime,
+				"cameraViewSize": parseFloat($('input[name = "cameraViewSize"]').val()),
+                "binkThresholdValue": parseFloat($('input[name = "binkThresholdValue"]').val())
+			});
+            //设置请求超时时间，比活体检测超时时间多60s
+			var timeoutValue = (120 + 60) * 1000;
+			if(detectionMaxTime){
+				timeoutValue = (detectionMaxTime + 60) * 1000
+			}
+            $(".bestImgUl").children().remove();
+            jQuery.support.cors = true;         //$ajax({}) 正常写
+            $.ajax({
+                type : "POST",
+                timeout: timeoutValue,
+                data : requestData,
+                url : "http://127.0.0.1:13302/facialLiveDetection/startLiveDetection",
+                success: function(result){
+                    var content = JSON.parse(result.content);
+                    if(!content.livingDetectionResult){
+                        content.livingDetectionResult = ""
+                    }
+                    if(!content.cameraName){
+                        content.cameraName = ""
+                    }
+                    if(!content.currentTime){
+                        content.currentTime = ""
+                    }
+                    //显示活体检测结果
+                    getDom("liveDetectionResContent",1,"liveDetectionResInfo").innerHTML = result.code;
+                    getDom("liveDetectionResContent",2,"liveDetectionResInfo").innerHTML = result.errMsg;
+                    getDom("liveDetectionResContent",3,"liveDetectionResInfo").innerHTML = content.challenge;
+                    // var {livingDetectionResult = "",cameraName = "",currentTime = ""} = content; //ie8不兼容
+                    getDom("liveDetectionResContent",4,"liveDetectionResInfo").innerHTML = content.livingDetectionResult;
+                    getDom("liveDetectionResContent",5,"liveDetectionResInfo").innerHTML = content.cameraName;
+                    getDom("liveDetectionResContent",6,"liveDetectionResInfo").innerHTML = content.currentTime;
+                    var bestImgArray = content.bestImgArray;
+                    if(bestImgArray){
+                        for(var i = 0; i < bestImgArray.length; i++){
+
+                            $(".bestImgUl").append("<li class='bestImgLi'></li>");
+                            var bestImgBase64 = bestImgArray[i];
+                            // 创建图片对象
+                            var img = new Image(200);
+                            var imgBox = $(".bestImgLi")[i];
+                            //图片显示异常
+                            //在ie8上可能会由于照片大小超出限制而不显示图片，则直接显示图片的base64值
+                            img.onerror = (function(imgBox, bestImgBase64){
+                                return function() {
+                                    img.onerror = null;
+                                    //清除异常图片
+                                    $(".bestImgUl").children().remove(".bestImgLi");
+                                    $(".bestImgUl").append("<li class='bestImgTextLi'><div class='bestImgText'>" + bestImgBase64 + "</div></li>");
+                                    imgBox.appendChild(img);
+                                };
+                            })(imgBox, bestImgBase64);
+                            // 设置图片的 src 为 base64 编码字符串
+                            img.src = bestImgArray[i];
+                            imgBox.appendChild(img);
+                        }   
+                    }else{
+                        $(".bestImgUl").children().remove();
+                    }
+                },
+                error:function(){
+                    alert("异常，请检查客户端是否开启");
+                }
+
+            });	
+        }
+        function setBestImg(base64){
+
+        }
+    </script>
+    <script src="./js/rem.js" type="text/javascript"></script>
+</body>
+</html>
