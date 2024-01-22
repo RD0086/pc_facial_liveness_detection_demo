@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>活体检测DEMO</title>
     <script src="../dist/bundle.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/style.css">
     <script src="./js/jquery.js"></script>
@@ -14,7 +14,7 @@
         <script src="./js/respond.src.js"></script>
     <![endif]-->
     <style>
-        
+
     </style>
 </head>
 <body>
@@ -72,7 +72,7 @@
                         <select id="cameraTypeSelect">
                             <option value="0">单目摄像头</option>
                             <option value="1">双目摄像头</option>
-                        </select>    
+                        </select>
                     </div>
                     <div class="livingDetectItem">
                         <span>摄像头类型</span>
@@ -161,7 +161,7 @@
                 handleStartLivingDetect();
             })
         });
-        
+
         function launchApplication(url,success,fail){
             //如果上次调起客户端没有完成，则直接返回，防止重复调用
             if(!isDone)return;
@@ -177,22 +177,22 @@
                     success();
                 }
             };
-            
+
             triggerEl.onerror = function(){
                 //进入错误事件回调函数说明没有注册协议
                 done();
                 fail();
             };
-        
-        
+
+
             try{
                 triggerEl.src = url;
             }catch(e){
                 //捕获到异常说明没有注册协议
                 done();
-                fail(); 
+                fail();
             }
-        
+
             //如果超过一定时间仍然没有变化，说明没有注册协议
             timeout = setTimeout(function(){
                 done();
@@ -216,7 +216,7 @@
                 }else{
                     $(".monocularCameraUl")[0].innerHTML = "";
                     $(".binocularCameraUl")[0].innerHTML = ""
-                }  
+                }
             }
             var challenge = randomString(24);
             var requestData= JSON.stringify({"challenge":challenge});
@@ -301,7 +301,7 @@
 			var timestamp = y + M + d + H + m + s;
 			len = len - timestamp.length - 3;
 			/****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
-			var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    
+			var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
 			var maxPos = $chars.length;
 			var randomStr = '';
 			for (var i = 0; i < len; i++) {
@@ -379,7 +379,7 @@
                             // 设置图片的 src 为 base64 编码字符串
                             img.src = bestImgArray[i];
                             imgBox.appendChild(img);
-                        }   
+                        }
                     }else{
                         $(".bestImgUl").children().remove();
                     }
@@ -388,7 +388,7 @@
                     alert("异常，请检查客户端是否开启");
                 }
 
-            });	
+            });
         }
         function setBestImg(base64){
 
