@@ -1,3 +1,9 @@
+## 简介
+PC端活体检测插件，支持 Windows, MAC OS，UBUNTU, 统信， 麒麟等系统，支持 native 应用，跨应用，浏览器应用调用，效果如下：
+
+![DEMO](imgs/demo.gif)
+
+
 ## 使用说明
 
 ```bash
@@ -20,4 +26,23 @@ http-serve src -p 8080
 ```
 
 ## 参考文档
+
 可参考文档：https://esandinfo.yuque.com/yv6e1k/aa4qsg/fu48aobksfupucza
+
+
+## 其他
+
+有任何问题或疑问可联系我
+
+```
+瑞德
+
+微信：esand_info
+qq: 3626921591
+电话：13691664797
+邮箱：reid.li@foxmail.com
+```
+
+扫码加我微信
+
+![QRCODE](imgs/qrcode.jpeg)
